@@ -19,9 +19,30 @@ class MapSampleState extends State<MapSample> {
     zoom: 14.4746,
   );
 
+  List<Marker>_markers=[];
+  late LatLng latLng_global;
+  void addMarker(LatLng latlng){
+    // adding marker in the clicked latitude longitude
+    _markers.add(Marker(
+      markerId: MarkerId("adding markers"),
+      draggable: true,
+      position: latlng,
+      onTap: (){
+        //Show details of the place
+        //Show distance
+      },
+      onDrag: (newlatlng){
+        latLng_global = newlatlng;
+        setState(() {
+          //refresh page
+        });
+      }
+    ));
+  }
+
   static const CameraPosition _kLake = CameraPosition(
       // bearing: 192.8334901395799,
-      target: LatLng(28.2096, 83.9856),
+      target: LatLng(15.386033, 73.844040),
       tilt: 20,
       zoom: 15);
   @override
@@ -41,8 +62,12 @@ class MapSampleState extends State<MapSample> {
         width: size.width,
         child: GoogleMap(
           mapType: MapType.hybrid,
-
           initialCameraPosition: _kGooglePlex,
+          onTap: (latlong){
+            setState(() {
+              addMarker(latlong);
+            });
+          },
           onMapCreated: (GoogleMapController controller) {
             mapController= controller;
             mapController.setMapStyle(_mapStyle);
@@ -58,9 +83,10 @@ class MapSampleState extends State<MapSample> {
       ),
     );
   }
-
   Future<void> _goToTheLake() async {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
   }
+
 }
+
